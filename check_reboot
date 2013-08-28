@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if dpkg-query -W update-notifier-common &> /dev/null; then
+  if [ -f /var/run/reboot-required ]; then
+    PKGS=`cat /var/run/reboot-required.pkgs | tr '\n' ',' | sed 's/,$//' | sed 's/,/, /'`
+    INFO="WARNING: System restart required to apply $PKGS."
+    STATE=1
+  else
+    INFO="OK: System restart not required."
+    STATE=0
+  fi
+else
+  INFO="ERROR: update-notifier-common package not installed."
+  STATE=3
+fi
+
+echo "$INFO"
+exit $STATE
